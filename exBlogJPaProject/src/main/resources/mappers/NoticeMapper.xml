@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mnu.exblog.mapper.NoticeMapper">
+
+    <select id="NoticeCount" resultType="int">
+        SELECT COUNT(*) FROM notice
+    </select>
+
+    <select id="NoticeCountSearch" resultType="int">
+        SELECT COUNT(*) FROM notice
+        <where>
+            <if test="search == 'title'">
+                title LIKE CONCAT('%', #{key}, '%')
+            </if>
+            <if test="search == 'content'">
+                content LIKE CONCAT('%', #{key}, '%')
+            </if>
+            <if test="search == 'writer_id'">
+                writer_id LIKE CONCAT('%', #{key}, '%')
+            </if>
+        </where>
+    </select>
+    
+    <select id="NoticeList" resultType="com.mnu.exblog.domain.NoticeDTO">
+        SELECT * FROM notice 
+        ORDER BY is_top DESC, regdate DESC 
+    </select>
+
+    <select id="NoticeListSearchPage" resultType="com.mnu.exblog.domain.NoticeDTO">
+        SELECT * FROM notice
+        <where>
+            <if test="search == 'title'">
+                title LIKE CONCAT('%', #{key}, '%')
+            </if>
+            <if test="search == 'content'">
+                content LIKE CONCAT('%', #{key}, '%')
+            </if>
+            <if test="search == 'writer_id'">
+                writer_id LIKE CONCAT('%', #{key}, '%')
+            </if>
+        </where>
+        ORDER BY is_top DESC, regdate DESC
+        LIMIT #{startpage},#{maxlist}
+    </select>
+	<select id="NoticeListPage" resultType="com.mnu.exblog.domain.NoticeDTO">
+    SELECT * FROM notice
+    ORDER BY is_top DESC, idx DESC 
+    LIMIT #{startpage}, #{maxlist}
+	</select>
+	<!-- 글 등록 -->
+	<insert id="NoticeWrite">
+    INSERT INTO notice (title, content, writer_id, is_top) 
+    VALUES (#{title}, #{content}, #{writer_id}, #{is_top})
+	</insert>
+	<!-- view -->
+	<select id="NoticeSelect" resultType="com.mnu.exblog.domain.NoticeDTO">
+	    SELECT * FROM notice WHERE idx = #{idx}
+	</select>
+	
+	<!-- 조회수 -->
+	<update id="Noticehits">
+		update notice set readcnt=readcnt + 1 where idx=#{idx}
+	</update>
+	<!-- 수정 -->
+	<update id="noticeModify">
+    UPDATE notice 
+    SET title = #{title}, 
+        content = #{content}, 
+        is_top = #{is_top}
+    WHERE idx = #{idx}
+	</update>
+	<select id="NoticeSelectonly" resultType="com.mnu.exblog.domain.NoticeDTO">
+    SELECT * FROM notice WHERE idx = #{idx}
+	</select>
+	
+</mapper>

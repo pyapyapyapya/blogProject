@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mnu.exblog.mapper.UserMapper">
+	<select id="userIdCheck"  resultType="int">
+       SELECT COUNT(*) 
+        FROM member 
+        WHERE id = #{id}
+    </select>
+
+    <insert id="userInsert" parameterType="com.mnu.exblog.domain.UserDTO">
+        INSERT INTO member (id, pw, name, tel, email)
+        VALUES (#{id}, #{pw}, #{name},#{tel}, #{email})
+    </insert>
+
+    <select id="loginCheck" resultType="com.mnu.exblog.domain.UserDTO">
+        SELECT id, pw, name, role, tel, email
+        FROM member 
+        WHERE id = #{id} AND pw = #{pw}
+    </select>
+    <!-- 로그인(아이디 존제시 비번 반환 -->
+	<select id="userLoginSearch" resultType="string">
+		select pw from member where id=#{id}
+	</select>
+	<!--  로그인 성공시 session 저장용 -->
+	<select id="userLogin" resultType="com.mnu.exblog.domain.UserDTO">
+		select * from member where id=#{id}
+	</select>
+	<!-- 로그인시 마지막 로그인한 날자 update -->
+	<update id="userLoginLastTimeDate" >
+		update member set last_time=now() where id=#{id}
+	</update>
+	<update id="userModify" parameterType="com.mnu.exblog.domain.UserDTO">
+	    UPDATE member 
+	    SET pw = #{pw},
+	        name = #{name},
+	        tel = #{tel},
+	        email = #{email}
+	    WHERE id = #{id}
+	</update>
+</mapper>

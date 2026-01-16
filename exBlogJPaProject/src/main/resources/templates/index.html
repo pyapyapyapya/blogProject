@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>개인 블로그 프로젝트</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="main-container">
+        
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <div class="section-box">
+            <h5>공지사항</h5>
+            <hr>
+           <ul style="list-style: none; padding: 0;">
+			    <li th:each="notice : ${latestNotices}" style="margin-bottom: 8px;">
+			        📢 <a th:href="@{/notice/notice_view(idx=${notice.idx}, page=1)}" 
+			              th:text="${notice.title}" style="text-decoration:none; color:#333;">제목</a>
+			    </li>
+			</ul>
+        </div>
+
+        <div class="section-box">
+            <h5>자유게시판</h5>
+            <hr>
+            <ul style="list-style: none; padding: 0;">
+		    <li th:each="photo : ${latestPhotos}" style="margin-bottom: 8px;">
+		        📸 <a th:href="@{/photoboard/photoboard_view(idx=${photo.idx}, page=1)}" 
+		              th:text="${photo.title}" style="text-decoration:none; color:#333;">제목</a>
+		    </li>
+		</ul>
+        </div>
+
+        <footer style="text-align: center; color: #999; margin-top: auto; padding-top: 30px;">
+            <p>© 2026 개인 블로그. All rights reserved.</p>
+        </footer>
+    </div>
+
+</body>
+</html>	

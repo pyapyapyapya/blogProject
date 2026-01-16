@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>등록 처리 중</title>
+</head>
+<body>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        
+        // 컨트롤러에서 model.addAttribute("row", row) 로 보낸 값을 가져옴
+        let row = [[${row}]];
+
+        if (row == 1) {
+            alert("등록이 성동했습니다");
+            // 성공하면 리스트 페이지로 이동
+            location.href = "/photoboard/photoboard_list";
+        } else {
+            alert("등록에 실패했습니다.");
+            // 실패하면 다시 작성하던 화면으로 돌아가기
+            history.back();
+        }
+
+        /*]]>*/
+    </script>
+</body>
+</html>

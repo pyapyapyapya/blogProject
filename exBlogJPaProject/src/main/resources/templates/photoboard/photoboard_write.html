@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>사진 올리기</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <div class="main-container">
+        <div th:replace="~{fragments/header :: header}"></div>
+        <div class="write-container" style="max-width:800px; margin:20px auto; padding:30px; background:#fff; border-radius:12px;">
+            <h2>📸 새로운 사진 올리기</h2>
+            <form th:action="@{/photoboard/photoboard_write_pro}" method="post" enctype="multipart/form-data">
+            	<div class="input-group">
+				    <label>분류</label>
+				    <select name="category" class="search-select">
+				        <option value="잡담" th:selected="${photo?.category == '잡담'}">잡담</option>
+				        <option value="질문" th:selected="${photo?.category == '질문'}">질문</option>
+				    </select>
+				</div>
+                <div style="margin-bottom:15px;">
+                    <label>작성자 이름</label>
+                    <input type="text" name="writer_name" style="width:95%; padding:10px;" required>
+                </div>
+                <div style="margin-bottom:15px;">
+                    <label>제목</label>
+                    <input type="text" name="title" style="width:95%; padding:10px;" required>
+                </div>
+                <div style="margin-bottom:15px;">
+                    <label>사진 선택</label>
+                    <input type="file" name="file" onchange="previewImage(this)" style="width:95%;" required>
+                    <img id="image-preview" style="max-width:250px; margin-top:10px; display:none; border-radius:8px;">
+                </div>
+                <div style="margin-bottom:15px;">
+                    <label>삭제 비밀번호</label>
+                    <input type="password" name="pass" style="width:95%; padding:10px;" required>
+                </div>
+                <div style="margin-bottom:15px;">
+                    <label>내용</label>
+                    <textarea name="content" style="width:95%; height:200px; padding:10px;" required></textarea>
+                </div>
+                <div style="text-align: right;">
+                    <button type="button" onclick="history.back()">취소</button>
+                    <button type="submit" style="background:#4a90e2; color:#fff; border:none; padding:10px 20px; cursor:pointer;">등록하기</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('image-preview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+</body>
+</html>

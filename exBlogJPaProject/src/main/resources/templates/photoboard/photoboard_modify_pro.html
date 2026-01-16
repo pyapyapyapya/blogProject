@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>처리 중 -</title>
+</head>
+<body>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const row = [[${row}]];
+        const idx = [[${idx}]];
+        const page = [[${page}]];
+
+        if (row === 1) {
+            alert("수정 완료");
+            // 수정된 글로 다시 돌아가기
+            location.href = "/photoboard/photoboard_view?idx=" + idx + "&page=" + page;
+        } else if (row === -1) {
+            alert("비밀번호 오류");
+            // 이전 수정 폼으로 돌아가기
+            history.back();
+        } else {
+            alert("수정실패");
+            history.back();
+        }
+        /*]]>*/
+    </script>
+</body>
+</html>

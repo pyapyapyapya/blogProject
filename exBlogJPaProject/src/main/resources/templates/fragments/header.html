@@ -1,0 +1,13 @@
+<div th:fragment="header" class="header-nav">
+	<a href="/" style="color: #4A90E2;">메인화면 </a>
+	 <li th:if="${session.user != null}">
+        <a th:href="@{/login/user_modify}" style="color: #4A90E2;">내 정보수정</a>
+    </li>
+    <li th:if="${session.user == null}">
+        <a th:href="@{/login/user_insert}" style="color: #4A90E2;">회원가입</a>
+    </li>
+    
+    <a th:href="@{/notice/notice_board(page=1)}" style="color: #4A90E2;"> 공지사항 </a>
+    <a th:href="@{/photoboard/photoboard_list(page=1)}" style="color: #4A90E2;"> 자유게시판 </a>
+   
+</div>

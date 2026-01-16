@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 처리 결과</title>
+</head>
+<body>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        // 컨트롤러에서 보낸 model.addAttribute("row", row) 값을 읽어와!
+        var row = [[${row}]]; 
+        
+        if (row == 1) {
+            // 가입 성공 시 으헤~~
+            alert("환영함다\n\n회원가입 되었슴다");
+            location.href = "/"; // 로그인 페이지 주소로 이동!
+        } else {
+            // 가입 실패 시 (추측입니다: row가 1이 아닐 경우 실패로 간주함)
+            alert("회원가입에 실패했슴다.");
+            history.back(); // 이전 화면(가입 폼)으로 돌아가기
+        }
+        /*]]>*/
+    </script>
+</body>
+</html>

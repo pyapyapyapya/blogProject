@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        let row = [[${row}]];
+        if (row > 0) {
+            alert("글이 성공적으로 삭제되었습니다.");
+            location.href = "/photoboard/photoboard_list";
+        } else {
+            alert("비밀번호 불일치!");
+            history.back();
+        }
+        /*]]>*/
+    </script>
+</head>
+</html>

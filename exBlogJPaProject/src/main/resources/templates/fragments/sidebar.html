@@ -1,0 +1,42 @@
+<aside class="sidebar" th:fragment="sidebar" xmlns:th="http://www.thymeleaf.org">
+    
+    <div class="login-sidebar-container">
+
+        <div class="profile-image-section" style="text-align: center; padding: 20px;">
+            <div>
+                <img th:src="@{/images/KakaoTalk_20260108_164406349.png}" alt="기본로고" 
+                     style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #ccc; object-fit: cover; display: block; margin: 0 auto;">
+            </div>
+        </div>
+
+        <div th:if="${session.user == null}">
+            <h3 class="login-title">멤버 로그인</h3>
+            <form th:action="@{/login/user_login}" method="post">
+                <div class="login-input-group">
+                    <input type="text" name="id" placeholder="아이디" required>
+                </div>
+                <div class="login-input-group">
+                    <input type="password" name="pw" placeholder="비밀번호" required>
+                </div>
+                <button type="submit" class="btn-login">로그인</button>
+            </form>
+        </div>
+
+        <div th:if="${session.user != null}">
+            <div class="user-info" style="text-align: center; margin-top: 10px; background: #f9f9f9; padding: 10px; border-radius: 8px;">
+                <p><strong><span th:text="${session.user.name}">사용자명</span></strong>님 환영해!</p>
+                <div style="margin-top: 10px;">
+                    <a th:href="@{/login/user_modify}" class="btn-edit" 
+                       style="font-size: 0.8rem; color: #4A90E2; text-decoration: none; border: 1px solid #4A90E2; padding: 3px 8px; border-radius: 4px;">
+                       정보 수정
+                    </a>
+                </div>
+            </div>
+            
+            <form th:action="@{/login/logout}" method="post" style="text-align: center; margin-top: 15px;">
+                <button type="submit" class="btn-logout" style="width: 100%; padding: 8px; cursor: pointer;">로그아웃</button>
+            </form>
+        </div>
+
+    </div>
+</aside>

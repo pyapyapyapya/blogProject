@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mnu.exblog.mapper.PhotoBoardMapper">
+
+    <select id="PhotoCount" resultType="int">
+        SELECT COUNT(*) FROM photoboard WHERE parent_idx = 0
+    </select>
+
+    <select id="PhotoCountSearch" resultType="int">
+    SELECT COUNT(*) FROM photoboard
+    <where>
+        <if test="search == 'title'">
+            title LIKE CONCAT('%', #{key}, '%')
+        </if>
+        <if test="search == 'content'">
+            content LIKE CONCAT('%', #{key}, '%')
+        </if>
+        <if test="search == 'category'">
+            category LIKE CONCAT('%', #{key}, '%')
+        </if>
+        <if test="search == 'writer'">
+            writer_id LIKE CONCAT('%', #{key}, '%')
+        </if>
+    </where>
+</select>
+
+    <select id="PhotoList" resultType="com.mnu.exblog.domain.PhotoBoardDTO">
+        SELECT * FROM photoboard WHERE parent_idx = 0 ORDER BY idx DESC
+    </select>
+
+    <select id="PhotoListPage" resultType="com.mnu.exblog.domain.PhotoBoardDTO">
+        SELECT * FROM photoboard 
+        WHERE parent_idx = 0 
+        ORDER BY idx DESC 
+        LIMIT #{startpage}, #{maxlist}
+    </select>
+
+    <select id="PhotoListSearchPage" resultType="com.mnu.exblog.domain.PhotoBoardDTO">
+    SELECT * FROM photoboard
+    <where>
+        <if test="search == 'title'">
+            title LIKE CONCAT('%', #{key}, '%')
+        </if>
+        <if test="search == 'content'">
+            content LIKE CONCAT('%', #{key}, '%')
+        </if>
+        <if test="search == 'category'">
+            category LIKE CONCAT('%', #{key}, '%')
+        </if>
+        <if test="search == 'writer'">
+            writer_id LIKE CONCAT('%', #{key}, '%')
+        </if>
+    </where>
+    ORDER BY idx DESC
+    LIMIT #{startpage}, #{maxlist}
+</select>
+
+   <insert id="PhotoWrite">
+    INSERT INTO photoboard (
+        category, parent_idx, title, content, writer_id, writer_name, pass, photo
+    ) VALUES (
+        #{category}, 0, #{title}, #{content}, #{writer_id}, #{writer_name}, #{pass}, #{photo}
+    )
+	</insert>
+    <update id="Photohits">
+        UPDATE photoboard SET hits = hits + 1 WHERE idx = #{idx}
+    </update>
+
+    <select id="PhotoSelect" resultType="com.mnu.exblog.domain.PhotoBoardDTO">
+        SELECT * FROM photoboard WHERE idx = #{idx}
+    </select>
+
+    <update id="PhotoModify">
+    UPDATE photoboard 
+    SET category = #{category}, 
+        title = #{title}, 
+        content = #{content}, 
+        photo = #{photo}
+    WHERE idx = #{idx}
+	</update>
+
+    <delete id="PhotoDelete">
+        DELETE FROM photoboard WHERE idx = #{idx}
+    </delete>
+		<select id="PhotoCommentList" resultType="com.mnu.exblog.domain.PhotoBoardDTO">
+	    SELECT * FROM photoboard 
+	    WHERE parent_idx = #{idx} 
+	    ORDER BY idx ASC
+	</select>
+	
+	<insert id="PhotoCommentWrite">
+	    INSERT INTO photoboard (parent_idx, content, writer_id, writer_name, pass, title) 
+	    VALUES (#{parent_idx}, #{content}, #{writer_id}, #{writer_name}, #{pass}, 'REPLY')
+	</insert>
+	<update id="commentUpdate">
+	    UPDATE photoboard 
+	    SET content = #{content} 
+	    WHERE idx = #{idx} AND pass = #{pass}
+	</update>
+	
+</mapper>

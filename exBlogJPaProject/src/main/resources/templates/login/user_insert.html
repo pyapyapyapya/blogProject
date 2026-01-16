@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    
+    <script th:inline="javascript">
+        // 기존 jQuery 로직 (아이디 중복체크, SMS 인증 등) 그대로 유지
+        $(function(){
+            $("#smscheck").hide(); 
+
+            $("#idCheckBtn").click(function(){
+                var userid = $("#userid").val();
+                if(userid == "") { alert("아이디를 입력해주세요."); $("#userid").focus(); return; }
+                $.ajax({
+                    url: '/login/login_idcheck',
+                    type: 'post',
+                    data: { "userid" : userid },
+                    success: function(result){
+                        if(result == 0) {
+                            $("#userID_c").text("사용 가능합니다.").css("color", "blue");
+                        } else {
+                            $("#userID_c").text("중복된 아이디입니다.").css("color", "red");
+                            $("#userid").val('').focus();
+                        }
+                    },
+                    error: function() { alert("서버 통신 실패!"); }
+                });
+            });
+
+            $("#passwd, #repasswd").on("keyup change", function(){
+                var pw = $("#passwd").val();
+                var repw = $("#repasswd").val();
+                if(pw == "" && repw == "") {
+                    $("#repasswd_c").text("한번더 입력해주세요").css("color", "#888");
+                } else if(pw == repw) {
+                    $("#repasswd_c").text("비밀번호 일치합니다").css("color", "blue");
+                } else {
+                    $("#repasswd_c").text("비밀번호가 불일치").css("color", "red");
+                }
+            });
+
+            $("#phoneBtn1").click(function(){
+                var tel = $("#tel").val();
+                if(tel == '') { alert("전화번호를 입력해주세요."); return; }
+                $.ajax({
+                    url: '/login/login_sms',
+                    type: 'post',
+                    data: { "tel" : tel },
+                    success: function(result){
+                        alert("인증번호가 발송되었습니다!");
+                        $("#usersms_hidden").val(result); 
+                        $("#smscheck").show(); 
+                    },
+                    error: function() { alert("문자 발송 실패!"); }
+                });
+            });
+
+            $("#phoneBtn3").click(function(){
+                var inputSms = $("#resms").val();
+                var hiddenSms = $("#usersms_hidden").val();
+                if(inputSms == hiddenSms && inputSms != "") {
+                    $("#resms_c").text("인증 성공!").css("color", "blue");
+                } else {
+                    $("#resms_c").text("인증 실패.").css("color", "red");
+                    $("#resms").val('').focus();
+                }
+            });
+
+            $("#userSend").click(function(){
+                if($("#name").val()==''){ alert("이름을 써줘!"); return; }
+                if($("#userID_c").text().indexOf("가능") == -1){ alert("아이디 중복확인을 완료해주세요."); return; }
+                if($("#resms_c").text() != "인증 성공!") { alert("SMS 인증 확인 버튼을 눌러주세요."); return; }
+                alert("회원가입을 환영해");
+                $("#userForm").submit();
+            });
+
+            $("#userReset").click(function(){
+                if(confirm("입력한 내용을 초기화할까?")) {
+                    $("#userForm")[0].reset();
+                    $("#userID_c, #repasswd_c, #resms_c").text('');
+                }
+            });
+            
+            $("#email3").change(function(){
+                if($(this).val() != "0") {
+                    $("#email2").val($(this).val()).attr("readonly", true);
+                } else {
+                    $("#email2").val('').attr("readonly", false).focus();
+                }
+            });
+        }); 
+    </script>
+</head>
+<body>
+
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="main-container">
+        
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <div class="section-box join-page">
+            <h3 class="page-title">👤 사용자 등록</h3>
+            <p class="page-subtitle"><span class="required">*</span> 표시항목은 반드시 입력하십시요.</p>
+            <hr class="title-hr">
+
+            <form id="userForm" method="post" th:action="@{/login/login_insert_pro}">
+                <input type="hidden" id="usersms_hidden" name="usersms">
+                
+                <table class="form-table">
+                    <tr>
+                        <td class="label-cell">회원 성명 <span class="required">*</span></td>
+                        <td class="input-cell"><input type="text" name="name" id="name" class="form-control" placeholder="성명을 입력하세요."></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">회원 ID <span class="required">*</span></td>
+                        <td class="input-cell">
+                            <div class="input-group">
+                                <input type="text" name="id" id="userid" class="form-control" style="width: 200px;">
+                                <button type="button" id="idCheckBtn" class="btn-check">중복확인</button>
+                                <span id="userID_c" class="msg-text">5~16자 영문/숫자 조합</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">비밀번호 <span class="required">*</span></td>
+                        <td class="input-cell">
+                            <input type="password" name="pw" id="passwd" class="form-control" style="width: 250px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">비밀번호 확인 <span class="required">*</span></td>
+                        <td class="input-cell">
+                            <div class="input-group">
+                                <input type="password" id="repasswd" class="form-control" style="width: 250px;">
+                                <span id="repasswd_c" class="msg-text">동일하게 한 번 더 입력해줘.</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">전화번호 <span class="required">*</span></td>
+                        <td class="input-cell">
+                            <div class="input-group">
+                                <input type="text" name="tel" id="tel" class="form-control" style="width: 200px;" placeholder="(- 제외)">
+                                <button type="button" id="phoneBtn1" class="btn-check">인증번호받기</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr id="smscheck">
+                        <td class="label-cell">인증번호 확인 <span class="required">*</span></td>
+                        <td class="input-cell">
+                            <div class="input-group">
+                                <input type="text" id="resms" class="form-control" style="width: 200px;" placeholder="인증번호 입력">
+                                <button type="button" id="phoneBtn3" class="btn-check">인증확인</button>
+                                <span id="resms_c" class="msg-text"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">E-mail</td>
+                        <td class="input-cell">
+                            <div class="input-group">
+                                <input type="text" name="email1" id="email1" class="form-control" style="width: 120px;">
+                                <span>@</span>
+                                <input type="text" name="email2" id="email2" class="form-control" style="width: 150px;">
+                                <select id="email3" class="form-control" style="width: 150px;">
+                                    <option value="0">직접입력</option>
+                                    <option value="naver.com">naver.com</option>
+                                    <option value="daum.net">daum.net</option>
+                                    <option value="gmail.com">gmail.com</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+	
+                <div class="btn-area">
+                    <button type="button" id="userSend" class="btn-submit">회원가입 하기</button>
+                    <button type="button" id="userReset" class="btn-reset">다시 쓰기</button>
+                </div>
+            </form>
+        </div>
+	
+        <footer style="text-align: center; color: #bbb; padding: 40px 0;">
+            <p>© 2026 개인 블로그. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

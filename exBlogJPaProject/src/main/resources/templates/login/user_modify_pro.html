@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script th:inline="javascript">
+        const row = [[${row}]];
+        if (row === 1) {
+            alert("정보 수정 완료!");
+            location.href = "/";
+        } else {
+            alert("수정 실패...");
+            history.back();
+        }
+    </script>
+</head>
+<body></body>
+</html>

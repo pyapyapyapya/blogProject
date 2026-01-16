@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상세보기</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <div class="main-container">
+        <div th:replace="~{fragments/header :: header}"></div>
+        <div class="view-container" style="max-width:900px; margin:20px auto; padding:30px; background:#fff; border-radius:12px;">
+            <h2 th:utext="|[${photo.category}]${photo.title}|">제목</h2>
+            <p style="color:#777; font-size:0.9rem;">
+                작성자: [[${photo.writer_id}]] | 
+                날짜: [[${#temporals.format(photo.regdate, 'yyyy-MM-dd HH:mm')}]] | 
+                조회수: [[${photo.hits}]]
+            </p>
+            <hr>
+           <div style="text-align: center; margin:30px 0;">
+			    <img th:src="|/upload/photoboard/${photo.photo}|" 
+			         style="max-width:100%; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.1);">
+			</div>
+            <div style="white-space: pre-wrap; line-height:1.6;" th:text="${photo.content}">내용</div>
+            <div style="margin-top:40px; text-align:right;">
+                <a th:href="@{/photoboard/photoboard_list(page=${page})}" style="padding:10px 20px; background:#6c757d; color:#fff; text-decoration:none; border-radius:5px;">목록</a>
+                <a th:href="@{/photoboard/photoboard_modify(idx=${photo.idx},page=${page})}" style="padding:10px 20px; background:#6c757d; color:#fff; text-decoration:none; border-radius:5px;">수정</a>
+                <button onclick="deletePost()" style="padding:10px 20px; background:#e74c3c; color:#fff; border:none; border-radius:5px; cursor:pointer;">삭제</button>
+            </div>
+            <div class="comment-section" style="margin-top:50px;">
+    <h4>댓글 [[${clist.size()}]]개</h4>
+    <hr>
+	    <div th:each="comm : ${clist}" style="border-bottom:1px solid #eee; padding:10px 0;">
+		    <strong>[[${comm.writer_name}]]</strong> 
+		    <small style="color:#999;">([[${#temporals.format(comm.regdate, 'yyyy-MM-dd HH:mm')}]])</small>
+		    <p style="margin:5px 0;">[[${comm.content}]]</p>
+		    
+		    <a href="javascript:void(0);" 
+		       th:onclick="|commentMod('${comm.idx}', '${photo.idx}', '${page}')|" 
+		       style="color:#3498db; font-size:0.8rem; text-decoration:none; margin-right:10px;">
+		       수정
+		    </a>
+		    <a href="javascript:void(0);" 
+		       th:onclick="|commentDel('${comm.idx}', '${photo.idx}', '${page}')|" 
+		       class="btn-comment-delete" style="font-size:0.8rem;">
+		       삭제
+		    </a>
+		</div>
+
+    <div th:if="${session.user != null}" style="margin-top:20px; background:#f9f9f9; padding:20px; border-radius:8px;">
+        <form th:action="@{/photoboard/photoboard_comment_pro}" method="post">
+            <input type="hidden" name="parent_idx" th:value="${photo.idx}">
+            <input type="hidden" name="page" th:value="${page}">
+            <textarea name="content" style="width:97%; height:80px; padding:10px; border:1px solid #ddd; border-radius:4px;" placeholder="자유로운 의견을 표출해주세요"></textarea>
+            
+            <div style="text-align:right; margin-top:10px;">
+                <input type="password" name="pass" placeholder="비밀번호" style="padding:5px;">
+                <button type="submit" style="padding:8px 20px; background:#3498db; color:#fff; border:none; border-radius:5px; cursor:pointer;">댓글 등록</button>
+
+            
+            </div>
+       
+        </form>
+    </div>
+</div>
+        </div>
+    </div>
+    
+    <script th:inline="javascript">
+        function deletePost() {
+            let pass = prompt("비밀번호를 입력해 주세요");
+            if(pass) {
+                location.href = "/photoboard/photoboard_delete?idx=[[${photo.idx}]]&pass=" + pass;
+            }
+        }
+        function commentDel(idx, parentIdx, page) {
+            let pass = prompt("비밀번호를 입력해 주세요");
+            if(pass) {
+                location.href = "/photoboard/photoboard_comment_delete?idx=" + idx + 
+                                "&parent_idx=" + parentIdx + "&page=" + page + "&pass=" + pass;
+            }
+        }
+        function commentMod(idx, parentIdx, page) {
+            let pass = prompt("수정할 내용을 입력해 주세요");
+            if(pass) {
+                let newContent = prompt("비밀번호를입력해주세요");
+                if(newContent) {
+                    location.href = "/photoboard/photoboard_comment_modify?idx=" + idx + 
+                                    "&parent_idx=" + parentIdx + 
+                                    "&page=" + page + 
+                                    "&pass=" + pass + 
+                                    "&content=" + encodeURIComponent(newContent);
+                }
+            }
+        }
+    </script>
+    	
+</body>
+</html>

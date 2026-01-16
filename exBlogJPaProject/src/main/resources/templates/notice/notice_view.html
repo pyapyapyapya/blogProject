@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>공지사항 상세보기</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:inline="javascript">
+       
+    </script>
+    <style>
+        .view-box { padding: 20px; }
+        .view-header { border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
+        .view-title { font-size: 24px; font-weight: bold; color: #000; margin-bottom: 10px; }
+        .view-info { font-size: 14px; color: #666; display: flex; gap: 20px; }
+        .view-content { min-height: 300px; line-height: 1.6; font-size: 16px; color: #333; padding: 20px 0; border-bottom: 1px solid #eee; }
+        .btn-group { display: flex; justify-content: center; gap: 10px; margin-top: 30px; }
+        .btn { padding: 8px 20px; border-radius: 4px; text-decoration: none; font-size: 14px; cursor: pointer; border: 1px solid #ccc; transition: 0.3s; }
+        .btn-dark { background: #333; color: #fff; border: none; }
+        .btn-light { background: #fff; color: #333; }
+        .btn:hover { opacity: 0.8; }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <div class="main-container">
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <div class="section-box">
+            <div class="view-box">
+                <div class="view-header">
+                    <div class="view-title" th:text="${notice.title}">공지사항 제목입니다.</div>
+                    <div class="view-info">
+                        <span><strong>작성자:</strong> [[${notice.writer_id}]]</span>
+                        <span><strong>작성일:</strong> [[${#temporals.format(notice.regdate, 'yyyy-MM-dd HH:mm')}]]</span>
+                    </div>
+                </div>
+
+                <div class="view-content" th:utext="${notice.content}">
+				  
+				</div>
+
+                <div class="btn-group">
+                <th:block th:if="${session.user != null and (session.user.role == '1' or session.user.role == 1)}">
+			       <a th:href="@{/notice/notice_write(page=${page})}" class="btn btn-dark">글작성</a>
+                    <a th:href="@{/notice/notice_board(page=${page})}" class="btn btn-light">리스트로</a>
+                    <a th:href="@{/notice/notice_modify(idx=${notice.idx}, page=${page})}" class="btn btn-light">수정</a>
+                    <a href="javascript:void(0)" th:onclick="notice_delete([[${notice.idx}]])" class="btn btn-light" style="color: red;">삭제</a>
+			    </th:block>
+                  
+                    <a th:href="@{/notice/notice_board(page=${page})}" class="btn btn-light">리스트로</a>
+			   
+                </div>
+            </div>
+        </div>
+
+        <footer style="text-align: center; color: #bbb; padding: 40px 0;">
+            <p>© 2026 개인 블로그. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
